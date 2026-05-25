@@ -225,6 +225,14 @@ namespace Styx.Bot.Quest_Behaviors
             if (IsDone || Type == CodeType.Definition)
                 return false;
 
+            // Compilation failed — bail out cleanly instead of throwing every tick.
+            if (CoroutineProducer == null || !CoroutineProducer.IsCompiled)
+            {
+                LogMessage("error", "RunCode: expression was not compiled — skipping node.");
+                _isBehaviorDone = true;
+                return false;
+            }
+
 			await CoroutineProducer.CallableExpression();
             _isBehaviorDone = true;
             return true;
