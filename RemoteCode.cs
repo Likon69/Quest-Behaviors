@@ -6,7 +6,8 @@ using System.Collections.Generic;
 
 using CommonBehaviors.Actions;
 
-using Styx.CommonBot.Profiles;
+using Styx.Logic.Profiles;
+using Styx.Logic.Questing;
 using TreeSharp;
 
 #endregion
