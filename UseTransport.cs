@@ -149,6 +149,11 @@ namespace Styx.Bot.Quest_Behaviors
         }
 
 
+        private WoWPoint BoardLocation
+        {
+            get { return StandLocation != WoWPoint.Empty ? StandLocation : TransportLocation; }
+        }
+
         private WoWPoint TransportLocation
         {
             get
@@ -214,10 +219,10 @@ namespace Styx.Bot.Quest_Behaviors
                         ret => TransportLocation != WoWPoint.Empty && TransportLocation.Distance(StartLocation) < 2 && !_usedTransport,
                         new PrioritySelector(
                             new Decorator(
-                                ret => Me.Location.Distance2D(TransportLocation) > 2,
+                                ret => Me.Location.Distance2D(BoardLocation) > 2,
                                 new Sequence(
                                     new Action(ret => TreeRoot.StatusText = "Moving inside transport"),
-                                    new Action(ret => Navigator.PlayerMover.MoveTowards(TransportLocation)),
+                                    new Action(ret => Navigator.PlayerMover.MoveTowards(BoardLocation)),
                                     new Action(ret => StyxWoW.SleepForLagDuration()),
                                     new DecoratorContinue(
                                         ret => !Me.IsOnTransport,
