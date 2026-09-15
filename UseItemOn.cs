@@ -141,6 +141,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         private bool _isDisposed;
         private readonly List<ulong> _npcAuraWait = new List<ulong>();
         private readonly List<ulong> _npcBlacklist = new List<ulong>();
+        private readonly List<uint> _avoidMobEntries = new List<uint>();
         private Composite _root;
 
         // Private properties
@@ -165,13 +166,21 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 // NOTE: we should call any Dispose() method for any managed or unmanaged
                 // resource, if that resource provides a Dispose() method.
 
-                // Clean up managed resources, if explicit disposal...
                 if (isExplicitlyInitiatedDispose)
                 {
-                    // empty, for now
                 }
 
-                // Clean up unmanaged resources (if any) here...
+                if (_avoidMobEntries.Count > 0)
+                {
+                    var profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile;
+                    if (profile != null)
+                    {
+                        foreach (uint entry in _avoidMobEntries)
+                            profile.AvoidMobs.Remove(entry);
+                    }
+                    _avoidMobEntries.Clear();
+                }
+
                 TreeRoot.GoalText = string.Empty;
                 TreeRoot.StatusText = string.Empty;
 
@@ -416,6 +425,23 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 {
                     var root = (GroupComposite)currentRoot;
                     root.InsertChild(0, CreateBehavior());
+                }
+            }
+
+            if (NpcState == NpcStateType.Alive)
+            {
+                var profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile;
+                if (profile != null)
+                {
+                    foreach (int mobId in MobIds)
+                    {
+                        uint entry = (uint)mobId;
+                        if (!profile.AvoidMobs.Contains(entry))
+                        {
+                            profile.AvoidMobs.Add(entry);
+                            _avoidMobEntries.Add(entry);
+                        }
+                    }
                 }
             }
         }
