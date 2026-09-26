@@ -168,8 +168,10 @@ namespace Styx.Bot.Quest_Behaviors.FlyTo
                 // or the bot is stopped.
                 CharacterSettings.Instance.HarvestHerbs = false;
                 CharacterSettings.Instance.HarvestMinerals = false;
-                CharacterSettings.Instance.LootChests = false;
-                CharacterSettings.Instance.LootMobs = false;
+                // NOTE: LootChests/LootMobs are intentionally NOT disabled here.
+                // Forcing them off meant any mob that aggroed us mid-flight was killed
+                // and never looted, since most travel in [Fly] profiles happens inside
+                // this behavior.
                 CharacterSettings.Instance.NinjaSkin = false;
                 CharacterSettings.Instance.SkinMobs = false;
                 CharacterSettings.Instance.PullDistance = 1;
